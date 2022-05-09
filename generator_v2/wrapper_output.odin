@@ -16,7 +16,7 @@ output_wrappers :: proc(json_path: string, output_path: string, predefined_entit
     js, err := json.parse(json_bytes);
     defer json.destroy_value(js);
 
-    obj := js.value.(json.Object);
+    obj := js.(json.Object);
 
     if err != json.Error.None {
         log.error("Could not parse json file for foreign functions", err);

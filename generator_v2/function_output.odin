@@ -33,12 +33,13 @@ Foreign_Func_Param :: struct {
 
 output_foreign :: proc(json_path: string, output_path: string, predefined_entites: []Predefined_Entity) {
     log.info("Outputting foreign...");
-
+    using json
+    
     json_bytes, _ := os.read_entire_file(json_path);
     js, err := json.parse(json_bytes);
     defer json.destroy_value(js);
 
-    obj := js.value.(json.Object);
+    obj := js.(Object);
 
     if err != json.Error.None {
         log.error("Could not parse json file for foreign functions", err);
@@ -156,7 +157,7 @@ output_header :: proc(json_path: string, output_path: string, wrapper_map: ^Wrap
     js, err := json.parse(json_bytes);
     defer json.destroy_value(js);
 
-    obj := js.value.(json.Object);
+    obj := js.(json.Object);
 
     if err != json.Error.None {
         log.error("Could not parse json file for foreign functions", err);
@@ -308,7 +309,7 @@ write_header :: proc(sb: ^strings.Builder, wrapper_map: ^Wrapper_Map, g: Foreign
 count_cimgui_overloads :: proc(arr: json.Array) -> int {
     count := 0;
     for x in arr {
-        if is_nonUDT(x.value.(json.Object)) do continue;
+        if is_nonUDT(x.(json.Object)) do continue;
         count += 1;
     }
 
@@ -319,13 +320,13 @@ gather_foreign_proc_groups :: proc(groups : ^[dynamic]Foreign_Func_Group, obj: j
     reset_group_info();
     current_group := Foreign_Func_Group{};
     for _, v in obj {
-        overloads := v.value.(json.Array);
+        overloads := v.(json.Array);
         ov_count := count_cimgui_overloads(overloads);
 
         ov_group := Foreign_Overload_Group{};
 
         for ov in overloads {
-            ov_obj := ov.value.(json.Object);
+            ov_obj := ov.(json.Object);
             if is_vector(ov_obj)            do continue;
             if is_function_internal(ov_obj) do continue;
             if is_ctor_dtor(ov_obj)         do continue;
@@ -410,9 +411,9 @@ convert_json_to_foreign_func :: proc(ov_obj: json.Object) -> (Foreign_Func, bool
     f.link_name = get_value_string(ov_obj["ov_cimguiname"]);
     f.return_type = get_optional_string(ov_obj, "ret");
 
-    for arg in ov_obj["argsT"].value.(json.Array) {
+    for arg in ov_obj["argsT"].(json.Array) {
         param := Foreign_Func_Param{};
-        arg_obj := arg.value.(json.Object);
+        arg_obj := arg.(json.Object);
 
         param.name = get_value_string(arg_obj["name"]);
         param.type = get_value_string(arg_obj["type"]);
@@ -434,7 +435,7 @@ convert_json_to_foreign_func :: proc(ov_obj: json.Object) -> (Foreign_Func, bool
 
 @(private="file")
 get_default :: proc(obj: json.Object, param_name: string) -> string {
-    if dmap, ok := obj["defaults"].value.(json.Object); ok {
+    if dmap, ok := obj["defaults"].(json.Object); ok {
         if def, ok := dmap[param_name]; ok {
             return get_value_string(def);
         }
@@ -444,7 +445,7 @@ get_default :: proc(obj: json.Object, param_name: string) -> string {
 }
 @(private="file")
 parse_default :: proc(obj: json.Object, param_name: string) -> string {
-    if dmap, ok := obj["defaults"].value.(json.Object); ok {
+    if dmap, ok := obj["defaults"].(json.Object); ok {
         if def, ok := dmap[param_name]; ok {
             str := get_value_string(def);
             switch str {

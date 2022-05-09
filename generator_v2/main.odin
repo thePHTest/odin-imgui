@@ -60,26 +60,26 @@ output_enums :: proc(json_path: string, output_path: string) {
     definitions : [dynamic]Enum_Defintion;
     
     { // Gather
-        obj := js.value.(json.Object);
+        obj := js.(json.Object);
         blacklist : map[string]bool;
-        for k, v in obj["locations"].value.(json.Object) {
+        for k, v in obj["locations"].(json.Object) {
             location := get_value_string(v);
             if strings.has_prefix(location, "imgui_internal") do blacklist[k] = true;
         }
 
-        for k, v in obj["enums"].value.(json.Object) {
+        for k, v in obj["enums"].(json.Object) {
             def := Enum_Defintion{};
 
             if _, ok := blacklist[k]; ok do continue;
 
             def.name = k;
             
-            for x in v.value.(json.Array) {
-                field := x.value.(json.Object);
+            for x in v.(json.Array) {
+                field := x.(json.Object);
                 res := Enum_Field{};
                 res.name = get_value_string(field["name"]);
 
-                #partial switch v in field["value"].value {
+                #partial switch v in field["value"] {
                     case json.Integer: {
                         res.value = int(v);
                     }
@@ -220,23 +220,23 @@ output_structs :: proc(json_path: string, output_path: string, predefined_entite
 
     
     { // Gather
-        obj := js.value.(json.Object);
+        obj := js.(json.Object);
         blacklist : map[string]bool;
-        for k, v in obj["locations"].value.(json.Object) {
+        for k, v in obj["locations"].(json.Object) {
             location := get_value_string(v);
             if strings.has_prefix(location, "imgui_internal") do blacklist[k] = true;
             if strings.has_prefix(location, "imstb_textedit") do blacklist[k] = true;
         }
 
-        for k, v in obj["structs"].value.(json.Object) {
+        for k, v in obj["structs"].(json.Object) {
             def := Struct_Definition{};
 
             if _, ok := blacklist[k]; ok do continue;
 
             def.name = k;
 
-            for x in v.value.(json.Array) {
-                field := x.value.(json.Object);
+            for x in v.(json.Array) {
+                field := x.(json.Object);
                 res := Struct_Field{};
 
                 res.size = get_optional_int(field, "size");
