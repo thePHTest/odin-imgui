@@ -93,18 +93,12 @@ process_predefined :: proc(odin_file_path: string) -> []Predefined_Entity {
         log.warnf("%s(%d:%d): ", pos.file, pos.line, pos.column);
         log.warnf(msg, ..args);
     }
-/*
-    p := parser.Parser {
-        //flags = {parser.Flag.Optional_Semicolons},
-        err  = err_log,
-        warn = warn_log,
-    };
-*/
-p := parser.default_parser()
-p.err = err_log
-p.warn = warn_log
 
-    ast_package,ok := parser.parse_package_from_path("generator_v2/predefined",&p);
+    p := parser.default_parser()
+    p.err = err_log
+    p.warn = warn_log
+    ok := parser.parse_file(&p,&predefined_file);
+    
     if ok == false || p.error_count > 0 {
         log.errorf("FAILED TO PARSE '{}'", odin_file_path);
         os.exit(1);

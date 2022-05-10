@@ -133,11 +133,10 @@ clean_type :: proc(type: string) -> string {
         t = clean_imgui(t);
         t = strings.to_ada_case(t);
     }
-
     if size > 0 {
         sb := strings.make_builder();
         defer strings.destroy_builder(&sb);
-        fmt.sbprintf(&sb, "[{}]{}", size, t);
+        fmt.sbprintf(&sb, "[^]{}", t);
         t = strings.to_string(sb);
     }
 
