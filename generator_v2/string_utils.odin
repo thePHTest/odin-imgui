@@ -14,6 +14,31 @@ right_pad :: proc(sb: ^strings.Builder, current: int, desired: int) {
 name_type_map := map[string]string {
     "GetClipboardTextFn"     = `proc "c"(user_data : rawptr) -> cstring`,
     "SetClipboardTextFn"     = `proc "c"(user_data : rawptr, text : cstring)`,
+    "SetPlatformImeDataFn"   = `proc "c"(viewport : ^Viewport, data : ^Platform_Ime_Data)`,
+    "Platform_CreateWindow"  = `proc "c"(vp : ^Viewport)`,
+    "Platform_DestroyWindow"  = `proc "c"(vp : ^Viewport)`,
+    "Platform_ShowWindow"  = `proc "c"(vp : ^Viewport) `,
+    "Platform_SetWindowPos"  = `proc "c"(vp : ^Viewport,pos : Vec2)`,
+    "Platform_GetWindowPos"  = `proc "c"(vp : ^Viewport) -> ^Vec2`,
+    "Platform_SetWindowSize"  = `proc "c"(vp : ^Viewport,size : Vec2)`,
+    "Platform_GetWindowSize"  = `proc "c"(vp : ^Viewport) -> ^Vec2`,
+    "Platform_SetWindowFocus"  = `proc "c"(vp : ^Viewport)`,
+    "Platform_GetWindowFocus"  = `proc "c"(vp : ^Viewport) -> ^bool`,
+    "Platform_GetWindowMinimized"  = `proc "c"(vp : ^Viewport) -> ^bool`,
+    "Platform_SetWindowTitle"  = `proc "c"(vp : ^Viewport,str : cstring)`,
+    "Platform_SetWindowAlpha"  = `proc "c"(vp : ^Viewport , alpha : f32) `,
+    "Platform_UpdateWindow"  = `proc "c"(vp : ^Viewport) -> rawptr`,
+    "Platform_RenderWindow"  = `proc "c"(vp : ^Viewport,render_arg : rawptr)`,
+    "Platform_SwapBuffers"  = `proc "c"(vp : ^Viewport,render_arg : rawptr)`,
+    "Platform_GetWindowDpiScale"  = `proc "c"(vp : ^Viewport) -> ^f32`,
+    "Platform_OnChangedViewport"  = `proc "c"(vp : ^Viewport)`,
+    "Platform_CreateVkSurface"  = `proc "c"(vp : ^Viewport,vk_inst : u64 ,vk_allocators : rawptr,out_vk_surface : ^u64) -> ^int`,
+    "Renderer_CreateWindow"  = `proc "c"(vp : ^Viewport)`,
+    "Renderer_DestroyWindow"  = `proc "c"(vp : ^Viewport)`,
+    "Renderer_SetWindowSize"  = `proc "c"(vp : ^Viewport,size : Vec2)`,
+    "Renderer_RenderWindow"  = `proc "c"(vp : ^Viewport,render_arg : rawptr)r`,
+    "Renderer_SwapBuffers"  = `proc "c"(vp : ^Viewport,render_arg : rawptr)`,
+
     "ImeSetInputScreenPosFn" = `proc "c"(x, y : i32)`,
 };
 
@@ -46,6 +71,7 @@ type_map := map[string]string {
     "ImS8"   = "i8",
     "ImU8"   = "u8",
     "ImS16"  = "i16",
+    "ImU16"  = "u16",
     "ImU64"  = "u64",
 
     "ImTextureID" = "Texture_ID",
@@ -136,9 +162,17 @@ clean_type :: proc(type: string) -> string {
     if size > 0 {
         sb := strings.make_builder();
         defer strings.destroy_builder(&sb);
-        fmt.sbprintf(&sb, "[^]{}", t);
+        fmt.sbprintf(&sb, "[^]{}",t);
         t = strings.to_string(sb);
     }
+    /*
+    if size > 0 {
+        sb := strings.make_builder();
+        defer strings.destroy_builder(&sb);
+        fmt.sbprintf(&sb, "[{}]{}", size, t);
+        t = strings.to_string(sb);
+    }
+    */
 
     if count > 0 {
         sb := strings.make_builder();

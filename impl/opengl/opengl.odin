@@ -9,6 +9,7 @@ import gl  "vendor:OpenGL";
 import imgui "../..";
 import fmt "core:fmt"
 import "core:c"
+import "core:runtime"
 
 OpenGL_State :: struct {
     shader_program: u32,
@@ -49,7 +50,10 @@ OpenGL_Backup_State :: struct {
     last_enable_scissor_test: bool,
 }
 
+open_gl_state: ^OpenGL_State
+
 setup_state :: proc(using state: ^OpenGL_State) {
+    open_gl_state = state
     io := imgui.get_io();
     io.backend_renderer_name = "OpenGL";
     io.backend_flags |= .RendererHasVtxOffset;
@@ -77,6 +81,10 @@ setup_state :: proc(using state: ^OpenGL_State) {
     gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
     gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
     io.fonts.tex_id = imgui.Texture_ID(uintptr(font_tex_h));
+
+    if int(io.config_flags & imgui.Config_Flags.ViewportsEnable) != 0{//ConfigFlags_ViewportsEnable)
+        ImGui_ImplOpenGL3_InitPlatformInterface();
+    }
 }
 
 // This is a basic helper function for loading in fonts.
@@ -302,6 +310,38 @@ setup_imgui_shaders :: proc() -> u32 {
     }
 
     return program_h;
+}
+//--------------------------------------------------------------------------------------------------------
+// MULTI-VIEWPORT / PLATFORM INTERFACE SUPPORT
+// This is an _advanced_ and _optional_ feature, allowing the backend to create and handle multiple viewports simultaneously.
+// If you are new to dear imgui or creating a new binding for dear imgui, it is recommended that you completely ignore this section first..
+//--------------------------------------------------------------------------------------------------------
+
+ImGui_ImplOpenGL3_RenderWindow ::  proc "c"(viewport : ^imgui.Viewport , test : rawptr)
+{
+    context = runtime.default_context()
+    if (int(viewport.flags & imgui.Viewport_Flags.NoRendererClear) != 0)
+    {
+        clear_color := imgui.Vec4{0.0, 0.0, 0.0, 1.0};
+        gl.ClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
+        gl.Clear(gl.COLOR_BUFFER_BIT);
+    }
+    imgui_render(viewport.draw_data,open_gl_state^)
+    //ImGui_ImplOpenGL3_RenderDrawData(viewport->DrawData);
+}
+
+ImGui_ImplOpenGL3_InitPlatformInterface :: proc()
+{
+    platform_io := imgui.get_platform_io()
+    //ImGuiPlatformIO& platform_io = ImGui::GetPlatformIO();
+    //platform_io.Renderer_RenderWindow = ImGui_ImplOpenGL3_RenderWindow;
+    platform_io.renderer_render_window = ImGui_ImplOpenGL3_RenderWindow
+}
+
+ImGui_ImplOpenGL3_ShutdownPlatformInterface :: proc()
+{
+    imgui.destroy_platform_windows()
+    //ImGui::DestroyPlatformWindows();
 }
 
 @(private="package")
