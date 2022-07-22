@@ -47,8 +47,8 @@ Wrapper_Func :: struct {
 output_predefined_copies :: proc(output_path: string, predefined_entities: []Predefined_Entity) {
     log.info(#location());
 
-    sb := strings.make_builder();
-    defer strings.destroy_builder(&sb);
+    sb := strings.builder_make();
+    defer strings.builder_destroy(&sb);
     insert_package_header(&sb);
 
     { // SB Output

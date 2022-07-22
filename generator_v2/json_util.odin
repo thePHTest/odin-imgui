@@ -2,7 +2,7 @@ package main;
 
 import "core:encoding/json";
 
-get_value_string :: proc(v: json.Value) -> string do return v.(json.String);
+get_value_string :: proc(v: json.Value) -> string { return v.(json.String);}
 
 get_optional_string :: proc(obj: json.Object, key: string) -> string {
     v, ok := obj[key];

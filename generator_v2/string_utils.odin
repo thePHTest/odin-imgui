@@ -4,11 +4,13 @@ import "core:strings";
 import "core:fmt";
 import "core:strconv";
 
-insert_package_header :: proc(sb: ^strings.Builder) do fmt.sbprint(sb, "package imgui;\n\n");
+insert_package_header :: proc(sb: ^strings.Builder) { fmt.sbprint(sb, "package imgui;\n\n")}
 
 right_pad :: proc(sb: ^strings.Builder, current: int, desired: int) {
-    if desired-current <= 0 do return;
-    for _ in 0..(desired-current)-1 do fmt.sbprint(sb, " ");
+    if desired-current <= 0 { return;}
+    for _ in 0..=(desired-current)-1 {
+     fmt.sbprint(sb, " ")
+    }
 }
 
 name_type_map := map[string]string {
@@ -160,8 +162,8 @@ clean_type :: proc(type: string) -> string {
         t = strings.to_ada_case(t);
     }
     if size > 0 {
-        sb := strings.make_builder();
-        defer strings.destroy_builder(&sb);
+        sb := strings.builder_make();
+        defer strings.builder_destroy(&sb);
         fmt.sbprintf(&sb, "[^]{}",t);
         t = strings.to_string(sb);
     }
@@ -175,9 +177,9 @@ clean_type :: proc(type: string) -> string {
     */
 
     if count > 0 {
-        sb := strings.make_builder();
-        defer strings.destroy_builder(&sb);
-        for _ in 0..count-1 {
+        sb := strings.builder_make();
+        defer strings.builder_destroy(&sb);
+        for _ in 0..=count-1 {
             fmt.sbprint(&sb, '^');
         }
         fmt.sbprint(&sb, t);
@@ -189,7 +191,7 @@ clean_type :: proc(type: string) -> string {
 }
 
 remove_array_decleration :: proc(s : string, has_size := true) -> (string, int) {
-    if has_size == false do return s, 0;
+    if has_size == false  {return s, 0;}
 
     result := s;
     number := 0;

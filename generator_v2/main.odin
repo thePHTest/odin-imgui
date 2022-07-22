@@ -42,8 +42,8 @@ output_enums :: proc(json_path: string, output_path: string) {
         return;
     }
 
-    sb := strings.make_builder();
-    defer strings.destroy_builder(&sb);
+    sb := strings.builder_make();
+    defer strings.builder_destroy(&sb);
     insert_package_header(&sb);
 
     Enum_Defintion :: struct {
@@ -199,8 +199,8 @@ output_structs :: proc(json_path: string, output_path: string, predefined_entite
         return;
     }
 
-    sb := strings.make_builder();
-    defer strings.destroy_builder(&sb);
+    sb := strings.builder_make();
+    defer strings.builder_destroy(&sb);
     insert_package_header(&sb);
 
     Struct_Definition :: struct {

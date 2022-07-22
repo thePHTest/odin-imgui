@@ -23,8 +23,8 @@ output_wrappers :: proc(json_path: string, output_path: string, predefined_entit
         return nil;
     }
 
-    sb := strings.make_builder();
-    defer strings.destroy_builder(&sb);
+    sb := strings.builder_make();
+    defer strings.builder_destroy(&sb);
     insert_package_header(&sb);
     fmt.sbprint(&sb, "import \"core:fmt\";\n");
     fmt.sbprint(&sb, "import \"core:strings\";\n");
