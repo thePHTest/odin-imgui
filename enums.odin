@@ -1,4 +1,4 @@
-package imgui;
+package imgui
 
 Draw_Flags :: enum i32 {
 	None                    = 0,

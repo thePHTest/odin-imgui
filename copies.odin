@@ -1,24 +1,24 @@
-package imgui;
+package imgui
 
 ImID :: distinct u32
 
 
-Draw_Idx :: distinct u16 
+Draw_Idx :: distinct u16
 
 
-Wchar :: distinct u16 
+Wchar :: distinct u16
 
 
-Wchar16 :: distinct u16 
+Wchar16 :: distinct u16
 
 
-Wchar32 :: distinct u32 
+Wchar32 :: distinct u32
 
 
-Texture_ID :: distinct rawptr 
+Texture_ID :: distinct rawptr
 
 
-File_Handle :: distinct uintptr 
+File_Handle :: distinct uintptr
 
 
 Alloc_Func :: #type proc "c" (size: i64, user_data: rawptr) -> rawptr
@@ -33,7 +33,11 @@ Mem_Alloc_Func :: #type proc "c" (size: i64, user_data: rawptr) -> rawptr
 Mem_Free_Func :: #type proc "c" (ptr: rawptr, user_data: rawptr)
 
 
-Items_Getter_Proc :: #type proc "c" (data: rawptr, idx: i32, out_text: ^cstring) -> bool
+Items_Getter_Proc :: #type proc "c" (
+    data: rawptr,
+    idx: i32,
+    out_text: ^cstring,
+) -> bool
 
 
 Value_Getter_Proc :: #type proc "c" (data: rawptr, idx: i32) -> f32
@@ -57,10 +61,8 @@ Context :: struct {}
 Font_Builder_Io :: struct {}
 
 
-Im_Vector :: struct(T : typeid) {
-    size:     i32, 
+Im_Vector :: struct(T: typeid) {
+    size:     i32,
     capacity: i32,
     data:     ^T,
 }
-
-
